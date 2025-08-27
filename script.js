@@ -37,13 +37,24 @@ function operate(operator, firstNum, secondNum) {
 let allButtons = Array.from(document.querySelectorAll("button"));
 let display = document.querySelector("#display");
 let input;
+let fullEquation;
+let calculated = false;
 
-function clearInputs() {
+function clearInputsWithSum() {
     firstNum = "";
     secondNum = "";
     operation = "";
     input = "";
     sum = "";
+    calculated = false;
+}
+
+function clearInputsWithoutSum() {
+    firstNum = "";
+    secondNum = "";
+    operation = "";
+    input = "";
+    calculated = false;
 }
 
 function assignInput(input) {
@@ -56,12 +67,18 @@ function assignInput(input) {
         }
     } else {
         if (input === "=" && (firstNum && secondNum && operation)) {
+            calculated = true;
             operate(operation, firstNum, secondNum);
         } else if (input === "AC" || input === "CE") {
-            clearInputs();
-        } else if (input !== "=") {
+            clearInputsWithSum();
+        } else if (input !== "=" && !calculated) {
             operation = input;
-        };
+        } else {
+            clearInputsWithoutSum();
+            firstNum = sum;
+            sum = "";
+            operation = input;
+        }  
     };
 }
 
@@ -74,8 +91,14 @@ function addEvent() {
             console.log(operation);
             console.log(secondNum);
             console.log(sum);
+            fullEquation = getFullEquation(firstNum, operation, secondNum, sum);
+            display.textContent = fullEquation;
         });
     }
+}
+
+function getFullEquation(firstNum, operation, secondNum, sum) {
+    return `${firstNum} ${operation} ${secondNum} = ${sum}`;
 }
 
 addEvent();
